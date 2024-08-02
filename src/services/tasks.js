@@ -14,9 +14,34 @@ const createNewTask = async (newTask) => {
     body: JSON.stringify(newTask),
   });
 
-  const reqData = req.json();
+  const reqData = await req.json();
 
   return reqData;
 };
 
-export default { getAllTasks, createNewTask };
+const deleteTask = async (id) => {
+  const joinedUrl = `${url}/${id}`;
+
+  const req = await fetch(joinedUrl, {
+    method: 'DELETE',
+  });
+
+  if (!req.ok) {
+    throw new Error(`HTTP error: ${req.status}`);
+  }
+};
+
+const updateTask = async (updatedTask) => {
+  const joinedUrl = `${url}/${updatedTask.id}`;
+
+  const req = await fetch(joinedUrl, {
+    method: 'PUT',
+    body: JSON.stringify(updatedTask),
+  });
+
+  if (!req.ok) {
+    throw new Error(`HTTP error: ${req.status}`);
+  }
+};
+
+export default { getAllTasks, createNewTask, deleteTask, updateTask };

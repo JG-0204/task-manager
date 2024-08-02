@@ -4,7 +4,7 @@ const TaskForm = ({ add }) => {
   const [task, setTask] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (!task) {
       console.log('input a task');
