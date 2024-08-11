@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import TasksContext from './taskContext';
 
-const TaskForm = ({ add }) => {
+const TaskForm = () => {
+  const { addTask } = useContext(TasksContext);
+
   const [task, setTask] = useState('');
   const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState('none');
+  const [dueDate, setDueDate] = useState('none');
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -14,12 +19,15 @@ const TaskForm = ({ add }) => {
     const newTask = {
       task,
       description: !description ? 'No description added.' : description,
+      priority,
+      dueDate,
     };
 
-    add(newTask);
+    addTask(newTask);
 
     setTask('');
     setDescription('');
+    setDueDate('');
   };
 
   return (
@@ -44,6 +52,28 @@ const TaskForm = ({ add }) => {
             cols={20}
           ></textarea>
         </label>
+        <div>
+          <label>
+            due:
+            <input
+              type="date"
+              value={dueDate}
+              onChange={({ target }) => setDueDate(target.value)}
+              pattern="\d{2}/\d{2}/\d{4}"
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            prio:
+            <select onChange={({ target }) => setPriority(target.value)}>
+              <option value={priority}>None</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </label>
+        </div>
       </div>
 
       <button type="submit">Add</button>
