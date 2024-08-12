@@ -44,4 +44,29 @@ const updateTask = async (updatedTask) => {
   }
 };
 
-export default { getAllTasks, createNewTask, deleteTask, updateTask };
+const changeTaskStatus = async (newStatus, taskId) => {
+  const joinedUrl = `${url}/${taskId}`;
+
+  const req = await fetch(joinedUrl, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      status: newStatus,
+    }),
+  });
+
+  if (!req.ok) {
+    throw new Error(`HTTP error: ${req.status}`);
+  }
+
+  const reqData = await req.json();
+
+  return reqData;
+};
+
+export default {
+  getAllTasks,
+  createNewTask,
+  deleteTask,
+  updateTask,
+  changeTaskStatus,
+};

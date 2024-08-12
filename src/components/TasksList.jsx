@@ -4,13 +4,14 @@ import { formatDistance } from 'date-fns';
 import TasksContext from './taskContext';
 
 const Task = ({ task }) => {
-  const { updateTask, deleteTask } = useContext(TasksContext);
+  const { updateTask, deleteTask, toggleStatus } = useContext(TasksContext);
 
   const [isEditing, setIsEditing] = useState(false);
   const [taskName, setTaskName] = useState(task.task);
   const [taskDesc, setTaskDesc] = useState(task.description);
   const [taskDue, setTaskDue] = useState(task.dueDate);
   const [taskPrio, setTaskPrio] = useState(task.priority);
+  const [taskStatus, setTaskStatus] = useState(task.status);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,6 +29,24 @@ const Task = ({ task }) => {
     setIsEditing(false);
   };
 
+  const handleChangeStatus = () => {
+    const statuses = ['pending', 'in-progress', 'completed'];
+
+    const id = statuses.findIndex((status) => status === taskStatus);
+
+    const status = statuses[id + 1];
+
+    setTaskStatus(status);
+
+    if (id === 2) {
+      setTaskStatus(statuses[0]);
+      toggleStatus(statuses[0], task.id);
+      return;
+    }
+
+    toggleStatus(status, task.id);
+  };
+
   return (
     <div>
       {!isEditing ? (
@@ -36,7 +55,8 @@ const Task = ({ task }) => {
             Task: {taskName} <br /> Description: {taskDesc} <br />
             Due:{' '}
             {taskDue === 'none' ? taskDue : getDueDate(task.dateAdded, taskDue)}
-            <br /> Priority: {taskPrio} <br />
+            <br /> Priority: {taskPrio} <br /> Status:{' '}
+            <button onClick={handleChangeStatus}>{taskStatus}</button> <br />
             <button onClick={() => setIsEditing(true)}>edit</button>
             <button onClick={() => deleteTask(task.id)}>delete</button>
           </div>

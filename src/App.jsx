@@ -35,6 +35,14 @@ const App = () => {
     );
   };
 
+  const toggleStatus = async (newStatus, id) => {
+    const updatedTask = await tasksService.changeTaskStatus(newStatus, id);
+
+    setTasks((tasks) =>
+      tasks.map((task) => (task.id !== id ? task : updatedTask))
+    );
+  };
+
   return (
     <div>
       <h1>tasks</h1>
@@ -45,6 +53,7 @@ const App = () => {
           addTask,
           deleteTask,
           updateTask,
+          toggleStatus,
         }}
       >
         <TaskForm />
