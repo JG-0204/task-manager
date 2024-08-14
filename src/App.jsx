@@ -1,3 +1,5 @@
+import { Heading } from '@radix-ui/themes';
+
 import tasksService from './services/tasks';
 
 import TasksList from './components/TasksList';
@@ -45,8 +47,6 @@ const App = () => {
 
   return (
     <div>
-      <h1>tasks</h1>
-      <h3>add new</h3>
       <TasksContext.Provider
         value={{
           tasks,
@@ -57,6 +57,7 @@ const App = () => {
         }}
       >
         <TaskForm />
+        <Heading as="h1">Tasks</Heading>
         {!tasks ? <h3>loading....</h3> : <TasksList />}
       </TasksContext.Provider>
     </div>
