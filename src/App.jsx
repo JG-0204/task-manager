@@ -1,4 +1,4 @@
-import { Heading } from '@radix-ui/themes';
+import { Heading, Spinner, Section } from '@radix-ui/themes';
 
 import tasksService from './services/tasks';
 
@@ -45,6 +45,14 @@ const App = () => {
     );
   };
 
+  const refreshSubTasks = async (subtasks, id) => {
+    const updatedTask = await tasksService.refreshSubTasks(subtasks, id);
+
+    setTasks((tasks) =>
+      tasks.map((task) => (task.id !== id ? task : updatedTask))
+    );
+  };
+
   return (
     <div>
       <TasksContext.Provider
@@ -54,11 +62,13 @@ const App = () => {
           deleteTask,
           updateTask,
           toggleStatus,
+          refreshSubTasks,
         }}
       >
         <TaskForm />
         <Heading as="h1">Tasks</Heading>
-        {!tasks ? <h3>loading....</h3> : <TasksList />}
+        <Section size="1"></Section>
+        {!tasks ? <Spinner size="3" loading="true" /> : <TasksList />}
       </TasksContext.Provider>
     </div>
   );

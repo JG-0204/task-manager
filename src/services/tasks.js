@@ -63,10 +63,32 @@ const changeTaskStatus = async (newStatus, taskId) => {
   return reqData;
 };
 
+// subtasks is just the property of the task so this function handles all changes (adding, updating and deleting)
+
+const refreshSubTasks = async (subTasks, taskId) => {
+  const joinedUrl = `${url}/${taskId}`;
+
+  const req = await fetch(joinedUrl, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      subTasks,
+    }),
+  });
+
+  if (!req.ok) {
+    throw new Error(`HTTP error: ${req.status}`);
+  }
+
+  const reqData = await req.json();
+
+  return reqData;
+};
+
 export default {
   getAllTasks,
   createNewTask,
   deleteTask,
   updateTask,
   changeTaskStatus,
+  refreshSubTasks,
 };

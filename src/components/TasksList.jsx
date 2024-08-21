@@ -17,6 +17,7 @@ import {
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons';
 
 import TasksContext from './taskContext';
+import SubTasks from './SubTasks';
 
 const TasksList = () => {
   const { tasks } = useContext(TasksContext);
@@ -33,7 +34,8 @@ const TasksList = () => {
 };
 
 const Task = ({ task }) => {
-  const { updateTask, deleteTask, toggleStatus } = useContext(TasksContext);
+  const { updateTask, deleteTask, toggleStatus, refreshSubTasks } =
+    useContext(TasksContext);
 
   const [taskName, setTaskName] = useState(task.task);
   const [taskDesc, setTaskDesc] = useState(task.description);
@@ -80,6 +82,7 @@ const Task = ({ task }) => {
     toggleStatus(status, task.id);
   };
 
+  const handleSubTaskChange = (subtasks) => refreshSubTasks(subtasks, task.id);
   const handleTitleChange = ({ target }) => setTaskName(target.value);
   const handleDescriptionChange = ({ target }) => setTaskDesc(target.value);
   const handlePriorityChange = (value) => setTaskPrio(value);
@@ -122,6 +125,11 @@ const Task = ({ task }) => {
                       </Text>
                     </Box>
                   </Dialog.Description>
+
+                  <SubTasks
+                    subtasks={task.subTasks}
+                    refresh={handleSubTaskChange}
+                  />
 
                   <form onSubmit={handleSubmit}>
                     <Container maxWidth="450px" align="center" py="3">
