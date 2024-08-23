@@ -20,7 +20,7 @@ const TaskForm = () => {
 
   const [task, setTask] = useState('');
   const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState('');
+  const [priority, setPriority] = useState('none');
   const [dueDate, setDueDate] = useState('none');
 
   const handleSubmit = (event) => {
