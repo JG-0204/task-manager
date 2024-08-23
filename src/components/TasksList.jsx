@@ -9,15 +9,12 @@ import {
   Badge,
   Button,
   Dialog,
-  TextField,
-  Container,
-  TextArea,
-  Select,
 } from '@radix-ui/themes';
 import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons';
 
 import TasksContext from './taskContext';
 import SubTasks from './SubTasks';
+import TaskEditForm from './TaskEditForm';
 
 const TasksList = () => {
   const { tasks } = useContext(TasksContext);
@@ -34,7 +31,7 @@ const TasksList = () => {
 };
 
 const Task = ({ task }) => {
-  const { updateTask, deleteTask, toggleStatus, refreshSubTasks } =
+  const { deleteTask, toggleStatus, refreshSubTasks } =
     useContext(TasksContext);
 
   const [taskName, setTaskName] = useState(task.task);
@@ -42,27 +39,6 @@ const Task = ({ task }) => {
   const [taskDue, setTaskDue] = useState(task.dueDate);
   const [taskPrio, setTaskPrio] = useState(task.priority);
   const [taskStatus, setTaskStatus] = useState(task.status);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const updatedTask = {
-      ...task,
-      task: taskName,
-      description: taskDesc,
-      dueDate: taskDue,
-      priority: taskPrio,
-    };
-
-    updateTask(updatedTask);
-  };
-
-  const handleCancel = () => {
-    setTaskName(task.task);
-    setTaskDue(task.dueDate);
-    setTaskDesc(task.description);
-    setTaskPrio(task.priority);
-  };
 
   const handleStatusChange = () => {
     const statuses = ['pending', 'in-progress', 'completed'];
@@ -83,10 +59,51 @@ const Task = ({ task }) => {
   };
 
   const handleSubTaskChange = (subtasks) => refreshSubTasks(subtasks, task.id);
-  const handleTitleChange = ({ target }) => setTaskName(target.value);
-  const handleDescriptionChange = ({ target }) => setTaskDesc(target.value);
-  const handlePriorityChange = (value) => setTaskPrio(value);
-  const handleDueDateChange = ({ target }) => setTaskDue(target.value);
+
+  const displayTaskInfoDialog = () => {
+    return (
+      <Dialog.Root>
+        <Dialog.Trigger>
+          <Button color="cyan" variant="soft">
+            Edit <Pencil1Icon />
+          </Button>
+        </Dialog.Trigger>
+        <Dialog.Content maxWidth="650px">
+          <Dialog.Title>
+            <Flex align="center" justify="between">
+              <Text as="div" size="4">
+                {taskName}
+              </Text>
+              {showStatus(taskStatus)}
+            </Flex>
+          </Dialog.Title>
+          <Dialog.Description>
+            <Box as="span">
+              <Text as="span">Description</Text>
+              <br />
+              <Text as="span" mb="3">
+                {taskDesc}
+              </Text>
+            </Box>
+          </Dialog.Description>
+          <SubTasks subtasks={task.subTasks} refresh={handleSubTaskChange} />
+          <TaskEditForm
+            task={task}
+            state={{
+              title: taskName,
+              due: taskDue,
+              priority: taskPrio,
+              description: taskDesc,
+            }}
+            setTitle={setTaskName}
+            setDescription={setTaskDesc}
+            setDue={setTaskDue}
+            setPriority={setTaskPrio}
+          />
+        </Dialog.Content>
+      </Dialog.Root>
+    );
+  };
 
   return (
     <li>
@@ -97,101 +114,9 @@ const Task = ({ task }) => {
               Task: {taskName}
             </Heading>
             <Text as="div">Due: {getDueDate(task.dateAdded, taskDue)}</Text>
-
             <Text as="div">Status: {showStatus(taskStatus)}</Text>
-
             <Flex gap="2">
-              <Dialog.Root>
-                <Dialog.Trigger>
-                  <Button color="cyan" variant="soft">
-                    Edit <Pencil1Icon />
-                  </Button>
-                </Dialog.Trigger>
-                <Dialog.Content maxWidth="650px">
-                  <Dialog.Title>
-                    <Flex align="center" justify="between">
-                      <Text as="div" size="4">
-                        {taskName}
-                      </Text>
-                      {showStatus(taskStatus)}
-                    </Flex>
-                  </Dialog.Title>
-                  <Dialog.Description>
-                    <Box as="span">
-                      <Text as="span">Description</Text>
-                      <br />
-                      <Text as="span" mb="3">
-                        {taskDesc}
-                      </Text>
-                    </Box>
-                  </Dialog.Description>
-
-                  <SubTasks
-                    subtasks={task.subTasks}
-                    refresh={handleSubTaskChange}
-                  />
-
-                  <form onSubmit={handleSubmit}>
-                    <Container maxWidth="450px" align="center" py="3">
-                      <Flex gap="3" direction="column">
-                        <label>
-                          <Text as="div">Title</Text>
-                          <TextField.Root
-                            value={taskName}
-                            onChange={handleTitleChange}
-                          />
-                        </label>
-                        <label>
-                          <Text as="div">Description</Text>
-                          <TextArea
-                            value={taskDesc}
-                            onChange={handleDescriptionChange}
-                          />
-                        </label>
-                        <label>
-                          <Text as="span">Due: </Text>
-                          <input
-                            value={taskDue}
-                            type="date"
-                            onChange={handleDueDateChange}
-                          />
-                        </label>
-
-                        <Flex align="center" gap="1">
-                          <Text as="span">Priority: </Text>
-                          <Select.Root
-                            defaultValue={taskPrio}
-                            onValueChange={handlePriorityChange}
-                          >
-                            <Select.Trigger />
-                            <Select.Content>
-                              <Select.Group>
-                                <Select.Item value="none">None</Select.Item>
-                                <Select.Item value="low">Low</Select.Item>
-                                <Select.Item value="medium">Medium</Select.Item>
-                                <Select.Item value="high">High</Select.Item>
-                              </Select.Group>
-                            </Select.Content>
-                          </Select.Root>
-                        </Flex>
-                        <Flex>
-                          <Dialog.Close>
-                            <Button type="submit" color="blue">
-                              Save
-                            </Button>
-                          </Dialog.Close>
-                          <Dialog.Close>
-                            <Button onClick={handleCancel} color="ruby">
-                              Cancel
-                            </Button>
-                          </Dialog.Close>
-                        </Flex>
-                      </Flex>
-                    </Container>
-                  </form>
-                </Dialog.Content>
-              </Dialog.Root>
-
+              {displayTaskInfoDialog()}
               <Button
                 onClick={() => deleteTask(task.id)}
                 color="crimson"
