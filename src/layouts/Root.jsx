@@ -3,7 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 export default function Root() {
   return (
     <div>
-      <header
+      {/* <header
         style={{
           maxWidth: '1500px',
           margin: '10px auto',
@@ -14,8 +14,7 @@ export default function Root() {
           <NavLink to={'/'}>Home</NavLink>
           <NavLink to={'tasks/'}>Tasks</NavLink>
         </nav>
-      </header>
-
+      </header> */}
       <main>
         <Outlet />
       </main>

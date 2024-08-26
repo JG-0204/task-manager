@@ -5,6 +5,8 @@ import {
   Route,
 } from 'react-router-dom';
 
+import './App.css';
+
 import taskService from './services/tasks';
 
 import Root from './layouts/Root';

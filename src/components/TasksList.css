@@ -1,0 +1,36 @@
+.tasks-list {
+  list-style-type: none;
+  /* border: 1px solid #00ffff; */
+  height: 925px;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.status-heading-container {
+  min-width: 100%;
+  text-align: center;
+  color: white;
+}
+
+.status-heading {
+  padding-block: 5px;
+}
+
+.status-pending {
+  background-color: crimson;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  text-transform: uppercase;
+}
+
+.status-inProgress {
+  background-color: lightgreen;
+  text-transform: uppercase;
+}
+
+.status-completed {
+  background-color: cyan;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  text-transform: uppercase;
+}
