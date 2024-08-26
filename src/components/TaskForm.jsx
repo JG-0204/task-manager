@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import TasksContext from './taskContext';
+import TasksContext from './TasksContext';
 import {
   Box,
   Button,
@@ -13,7 +13,7 @@ import {
 } from '@radix-ui/themes';
 import { PlusIcon } from '@radix-ui/react-icons';
 
-const TaskForm = () => {
+const TaskForm = ({ status }) => {
   const { addTask } = useContext(TasksContext);
 
   const [isEnabled, setIsEnabled] = useState(true);
@@ -35,13 +35,13 @@ const TaskForm = () => {
       description: !description ? 'No description added.' : description,
       priority,
       dueDate,
+      status,
     };
 
     addTask(newTask);
 
     setTask('');
     setDescription('');
-    setDueDate('');
 
     // toggle form
     setIsEnabled(!isEnabled);
@@ -50,7 +50,7 @@ const TaskForm = () => {
   return (
     <>
       {!isEnabled ? (
-        <Box p="4" maxWidth="500px">
+        <Box p="4" width="500px">
           <Card>
             <form onSubmit={handleSubmit}>
               <Heading as="h3">New Task</Heading>
@@ -109,8 +109,12 @@ const TaskForm = () => {
         </Box>
       ) : (
         <Box p="4">
-          <Button onClick={() => setIsEnabled(!isEnabled)} size="4">
-            Add new task <PlusIcon />
+          <Button
+            onClick={() => setIsEnabled(!isEnabled)}
+            size="4"
+            variant="soft"
+          >
+            <PlusIcon />
           </Button>
         </Box>
       )}
