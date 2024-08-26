@@ -1,6 +1,5 @@
-import { useState } from 'react';
-
-import { Button, TextField, Text, Flex, Box } from '@radix-ui/themes';
+import { useState, useContext } from 'react';
+import { Button, TextField, Text, Flex } from '@radix-ui/themes';
 import {
   TrashIcon,
   Pencil1Icon,
@@ -8,17 +7,23 @@ import {
   ArrowLeftIcon,
 } from '@radix-ui/react-icons';
 
-const SubTasks = ({ subtasks, refresh }) => {
+import TasksContext from './TasksContext';
+
+const SubTasks = ({ task }) => {
+  const subtasks = task.subTasks;
+
+  const { refreshSubTasks } = useContext(TasksContext);
+
   const handleSubmit = (newSubTask) => {
     const updatedSubTasks = [...subtasks, newSubTask];
 
-    refresh(updatedSubTasks);
+    refreshSubTasks(updatedSubTasks, task.id);
   };
 
   const handleRemove = (id) => {
     const updatedSubTasks = subtasks.filter((subtask) => subtask.id !== id);
 
-    refresh(updatedSubTasks);
+    refreshSubTasks(updatedSubTasks, task.id);
   };
 
   const handleComplete = (subtask) => {
@@ -33,7 +38,7 @@ const SubTasks = ({ subtasks, refresh }) => {
       subtask.id !== id ? subtask : updatedSubTask
     );
 
-    refresh(updatedSubTasks);
+    refreshSubTasks(updatedSubTasks, task.id);
   };
 
   const handleEdit = (updatedSubTask) => {
@@ -43,7 +48,7 @@ const SubTasks = ({ subtasks, refresh }) => {
       subtask.id !== id ? subtask : updatedSubTask
     );
 
-    refresh(updatedSubTasks);
+    refreshSubTasks(updatedSubTasks, task.id);
   };
 
   if (subtasks.length === 0) {
