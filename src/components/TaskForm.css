@@ -1,0 +1,79 @@
+select {
+  border: 1px solid rgb(182, 178, 178);
+  padding: 10px 5px;
+  background-color: #fff;
+  font-size: 0.9rem;
+  width: 30%;
+}
+
+input[type='date'] {
+  border: 1px solid rgb(182, 178, 178);
+  padding: 10px 5px;
+  background-color: #fff;
+  width: 30%;
+}
+
+.form-card {
+  max-width: 500px;
+  position: absolute;
+  top: 25%;
+  right: 15%;
+  left: 33.3%;
+  z-index: 10000;
+}
+
+.form-heading {
+  padding-block: 5px;
+  margin: 0;
+}
+
+.form-heading h3 {
+  font-size: 1.3rem;
+}
+
+.form-heading p {
+  display: inline;
+  font-size: 1.1rem;
+  text-align: justify;
+  /* border: 1px solid red; */
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  margin-bottom: 15px;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.form-message {
+  font-weight: 300;
+  font-size: 0.8rem;
+  color: red;
+}
+
+.button-wrapper {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-block: 15px;
+}
+
+.add-button,
+.cancel-button {
+  width: 50%;
+}
+
+.field-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.row-container {
+  display: flex;
+  justify-content: space-between;
+}

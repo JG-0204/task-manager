@@ -1,19 +1,25 @@
 import { useState, useContext } from 'react';
-import TasksContext from './TasksContext';
+
 import {
-  Box,
   Button,
-  Flex,
   Card,
-  Heading,
   TextField,
-  Text,
   TextArea,
-  Select,
+  Separator,
+  Tooltip,
 } from '@radix-ui/themes';
-import { PlusIcon } from '@radix-ui/react-icons';
+import { PlusIcon, Cross2Icon } from '@radix-ui/react-icons';
+import * as Form from '@radix-ui/react-form';
+
+import { format } from 'date-fns';
+
+import TasksContext from './TasksContext';
+
+import './TaskForm.css';
 
 const TaskForm = ({ status }) => {
+  const currDate = getCurrDate();
+
   const { addTask } = useContext(TasksContext);
 
   const [isEnabled, setIsEnabled] = useState(true);
@@ -21,14 +27,12 @@ const TaskForm = ({ status }) => {
   const [task, setTask] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('none');
-  const [dueDate, setDueDate] = useState('none');
+  const [dueDate, setDueDate] = useState(currDate);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!task) {
-      console.log('input a task');
-      return;
-    }
+
+    console.log(typeof dueDate);
 
     const newTask = {
       task,
@@ -47,68 +51,105 @@ const TaskForm = ({ status }) => {
     setIsEnabled(!isEnabled);
   };
 
-  return (
-    <>
-      {!isEnabled ? (
-        <Box p="4" width="500px">
-          <Card>
-            <form onSubmit={handleSubmit}>
-              <Heading as="h3">New Task</Heading>
-              <Flex direction="column" justify="center" gap="4" px="2" py="3">
-                <label>
-                  <Text as="div">Title: </Text>
-                  <TextField.Root
-                    defaultValue={task}
-                    placeholder="create a simple task manager app"
-                    onChange={({ target }) => setTask(target.value)}
-                  />
-                </label>
-                <label>
-                  <Text as="div">Description: </Text>
-                  <TextArea
-                    value={description}
-                    onChange={({ target }) => setDescription(target.value)}
-                    placeholder="a task manager created with react"
-                  />
-                </label>
+  const handleExit = () => {
+    setTask('');
+    setDescription('');
+    setPriority('none');
+    setDueDate('none');
+    setIsEnabled(!isEnabled);
+  };
 
-                <label>
-                  <Text as="span">Due: </Text>
+  return (
+    <div>
+      {!isEnabled ? (
+        <Card className="form-card">
+          <Form.Root onSubmit={handleSubmit} className="form-root">
+            <div className="form-heading">
+              <h3>Add a new task</h3>
+              <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga,
+                amet.
+              </p>
+            </div>
+            <Separator size="4" my="2" />
+            <Form.Field name="task" className="form-field">
+              <div className="row-container">
+                <Form.Label className="form-label">Task </Form.Label>
+                <Form.Message
+                  match="valueMissing"
+                  className="form-message"
+                ></Form.Message>
+              </div>
+              <Form.Control asChild>
+                <TextField.Root
+                  defaultValue={task}
+                  placeholder="create a simple task manager app"
+                  onChange={({ target }) => setTask(target.value)}
+                  autoFocus
+                  required
+                />
+              </Form.Control>
+            </Form.Field>
+            <Form.Field name="description" className="form-field">
+              <Form.Label className="form-label">Description </Form.Label>
+              <Form.Control asChild>
+                <TextArea
+                  value={description}
+                  onChange={({ target }) => setDescription(target.value)}
+                  placeholder="a task manager created with react"
+                />
+              </Form.Control>
+            </Form.Field>
+            <Form.Field name="due" className="form-field">
+              <div className="field-wrapper">
+                <Form.Label className="form-label">Due </Form.Label>
+                <Form.Control asChild>
                   <input
                     type="date"
+                    min={currDate}
                     value={dueDate}
                     onChange={({ target }) => setDueDate(target.value)}
                   />
-                </label>
-
-                <label>
-                  <Flex align="center" gap="1">
-                    <Text as="span">Priority: </Text>
-                    <Select.Root
-                      defaultValue="none"
-                      onValueChange={(value) => setPriority(value)}
-                    >
-                      <Select.Trigger />
-                      <Select.Content>
-                        <Select.Group>
-                          <Select.Item value="none">None</Select.Item>
-                          <Select.Item value="low">Low</Select.Item>
-                          <Select.Item value="medium">Medium</Select.Item>
-                          <Select.Item value="high">High</Select.Item>
-                        </Select.Group>
-                      </Select.Content>
-                    </Select.Root>
-                  </Flex>
-                </label>
-                <Button type="submit" size="3">
-                  Create new task
+                </Form.Control>
+              </div>
+            </Form.Field>
+            <Form.Field name="priority" className="form-field">
+              <div className="field-wrapper">
+                <Form.Label className="form-label">Priority </Form.Label>
+                <Form.Control asChild>
+                  <select
+                    name="priority"
+                    id="priority"
+                    onChange={({ target }) => setPriority(target.value)}
+                  >
+                    <option value="none">None</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </Form.Control>
+              </div>
+            </Form.Field>
+            <Separator size="4" my="2" />
+            <Form.Submit asChild>
+              <div className="button-wrapper">
+                <Button size="3" variant="outline" className="add-button">
+                  Add <PlusIcon />
                 </Button>
-              </Flex>
-            </form>
-          </Card>
-        </Box>
+                <Button
+                  variant="outline"
+                  size="3"
+                  className="cancel-button"
+                  onClick={handleExit}
+                >
+                  Cancel <Cross2Icon />
+                </Button>
+              </div>
+            </Form.Submit>
+          </Form.Root>
+        </Card>
       ) : (
-        <Box p="4">
+        <Tooltip content="Create new task">
           <Button
             onClick={() => setIsEnabled(!isEnabled)}
             size="4"
@@ -116,10 +157,12 @@ const TaskForm = ({ status }) => {
           >
             <PlusIcon />
           </Button>
-        </Box>
+        </Tooltip>
       )}
-    </>
+    </div>
   );
 };
+
+const getCurrDate = () => format(new Date(), 'yyyy-MM-dd');
 
 export default TaskForm;
