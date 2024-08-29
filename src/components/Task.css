@@ -1,0 +1,35 @@
+.task-card {
+  width: 400px;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.remove-button {
+  position: absolute;
+  top: -5%;
+  right: 0;
+}
+
+.start-button,
+.open-task-button {
+  position: absolute;
+  top: -5%;
+  right: 15%;
+}
+
+.task-heading {
+  max-width: 80%;
+}
+
+.task-description {
+  margin-bottom: 5px;
+}
+
+.task-due {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 15px;
+}

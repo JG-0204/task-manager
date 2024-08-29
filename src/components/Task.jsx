@@ -1,12 +1,29 @@
 import { useState, useContext } from 'react';
-import { formatDistance } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 
-import { Card, Text, Heading, Button, Flex } from '@radix-ui/themes';
-import { TrashIcon } from '@radix-ui/react-icons';
+import {
+  Card,
+  Text,
+  Heading,
+  Button,
+  Flex,
+  Tooltip,
+  Separator,
+  Dialog,
+  Badge,
+} from '@radix-ui/themes';
+import {
+  TrashIcon,
+  CalendarIcon,
+  PaperPlaneIcon,
+  ReaderIcon,
+} from '@radix-ui/react-icons';
 
 import TasksContext from './TasksContext';
 
 import TaskInfoDialog from './TaskInfoDialog';
+
+import './Task.css';
 
 const Task = ({ task }) => {
   const { deleteTask, toggleStatus } = useContext(TasksContext);
@@ -33,73 +50,111 @@ const Task = ({ task }) => {
     toggleStatus(status, task.id);
   };
 
+  // Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero, placeat!
+
   return (
-    <li>
-      <Card size="4" style={setBorderByPriority(taskPrio)}>
-        <Flex direction="column" gap="2">
-          <Heading size="3" truncate>
-            {taskName.toUpperCase()}
+    <Card size="4" className="task-card">
+      <Flex direction="column" p="0">
+        <div className="wrapper">
+          <Heading size="3" truncate className="task-heading">
+            {taskName}
           </Heading>
-          <Text as="div" translate="yes">
+          <Separator size="4" mt="4" mb="2" />
+          <Text as="div" className="task-description" truncate>
             {taskDesc}
           </Text>
-          <Text as="div">
-            {taskDue === 'none'
-              ? 'No due date'
-              : 'due in ' + getDueDate(task.dateAdded, taskDue)}
+          <Text as="div" className="task-due">
+            <CalendarIcon /> {getDueDate(taskDue)}
           </Text>
-          <Flex gap="2" justify="center">
-            <TaskInfoDialog
-              task={task}
-              state={{
-                title: taskName,
-                description: taskDesc,
-                due: taskDue,
-                priority: taskPrio,
-                status: taskStatus,
-              }}
-              setTitle={setTaskName}
-              setDescription={setTaskDesc}
-              setDue={setTaskDue}
-              setPriority={setTaskPrio}
-            />
+          {showPriorityBadge(taskPrio)}
+          <Tooltip content="Remove task?">
             <Button
+              className="remove-button"
               onClick={() => deleteTask(task.id)}
               color="crimson"
               variant="soft"
             >
-              Remove <TrashIcon />
+              <TrashIcon />
             </Button>
-            <Button onClick={handleStatusChange} color="iris" variant="soft">
-              {taskStatus === 'pending' ? 'Get Task' : 'Complete'}
-            </Button>
-          </Flex>
-        </Flex>
-      </Card>
-    </li>
+          </Tooltip>
+          {taskStatus === 'pending' ? (
+            <Tooltip content="Start task">
+              <Button
+                className="start-button"
+                onClick={handleStatusChange}
+                color="iris"
+                variant="soft"
+              >
+                <PaperPlaneIcon />
+              </Button>
+            </Tooltip>
+          ) : (
+            <Flex gap="2" justify="center">
+              <Dialog.Root>
+                <Dialog.Trigger>
+                  <Button variant="soft" className="open-task-button">
+                    <Tooltip content="Open Task">
+                      <ReaderIcon />
+                    </Tooltip>
+                  </Button>
+                </Dialog.Trigger>
+
+                <TaskInfoDialog
+                  task={task}
+                  state={{
+                    title: taskName,
+                    description: taskDesc,
+                    due: taskDue,
+                    priority: taskPrio,
+                    status: taskStatus,
+                  }}
+                  toggleStatus={handleStatusChange}
+                  setTitle={setTaskName}
+                  setDescription={setTaskDesc}
+                  setDue={setTaskDue}
+                  setPriority={setTaskPrio}
+                />
+              </Dialog.Root>
+            </Flex>
+          )}
+        </div>
+      </Flex>
+    </Card>
   );
 };
 
-const getDueDate = (addDate, dueDate) => {
-  if (dueDate === 'none') {
-    return dueDate;
-  }
+const getDueDate = (dueDate) => {
+  const due = formatDistanceToNow(dueDate);
 
-  const due = formatDistance(addDate, dueDate);
-  return due;
+  const currDate = format(new Date(), 'yyyy-MM-dd');
+  if (format(dueDate, 'yyyy-MM-dd') < currDate) return `${due} passed it's due`;
+  return `due in ${due}`;
 };
 
-const setBorderByPriority = (priority) => {
-  switch (priority) {
-    case 'high':
-      return { borderLeft: '3px solid red' };
-    case 'medium':
-      return { borderLeft: '3px solid orange' };
-    case 'low':
-      return { borderLeft: '3px solid blue' };
-    default:
-      return '';
-  }
+const showPriorityBadge = (priority) => {
+  if (priority === 'high')
+    return (
+      <Badge size="2" color="ruby">
+        {priority + '-priority'}
+      </Badge>
+    );
+  if (priority === 'medium')
+    return (
+      <Badge size="2" color="teal">
+        {priority + '-priority'}
+      </Badge>
+    );
+  if (priority === 'low')
+    return (
+      <Badge size="2" color="iris">
+        {priority + '-priority'}
+      </Badge>
+    );
+  return (
+    <Badge size="2" color="gray">
+      no-priority
+    </Badge>
+  );
 };
 
 export default Task;
